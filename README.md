@@ -13,4 +13,4 @@ git remote add origin https://github.com/Rahul-1111/Traceability_BAPL.git
 git pull origin main --rebase
 
 # Step 4: Push Your Changes Again
-git push -u origin main --force
+git push -u origin main --force 
