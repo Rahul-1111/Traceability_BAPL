@@ -14,3 +14,6 @@ git pull origin main --rebase
 
 # Step 4: Push Your Changes Again
 git push -u origin main --force 
+
+# resolve issu
+git push origin main
