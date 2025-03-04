@@ -116,3 +116,9 @@ def fetch_torque_data(request):
         
         return JsonResponse({"data": formatted_data})  # ✅ JSON with formatted time
 
+from .filters import TraceabilityDataFilter
+
+def search_parts(request):
+    queryset = TraceabilityData.objects.all()
+    filter = TraceabilityDataFilter(request.GET, queryset=queryset)
+    return render(request, 'track/search_parts.html', {'filter': filter})

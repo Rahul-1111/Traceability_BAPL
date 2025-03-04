@@ -62,7 +62,7 @@ def generate_zpl_qrcode(qr_data):
     ^XA
     ^PW160
     ^LL100
-    ^FT45,105^BQN,2,4
+    ^FT35,120^BQN,2,4
     ^FH\\^FDLA,{qr_data}^FS
     ^PQ1,0,1,Y
     ^XZ
@@ -73,7 +73,7 @@ def print_zpl(zpl_command):
     """Sends ZPL command to the Zebra printer."""
     try:
         z = Zebra()
-        z.setqueue("ZDesigner GT800 (ZPL)")  
+        z.setqueue("TSC TE210")  
         z.output(zpl_command)
         logger.info("✅ ZPL command sent successfully.")
     except Exception as e:

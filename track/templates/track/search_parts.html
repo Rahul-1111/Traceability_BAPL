@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Parts</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        /* Button Container for Proper Alignment */
+        .form-buttons {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        /* Ensuring Both Buttons Have the Same Size */
+        .form-buttons button, 
+        .form-buttons .clear-button {
+            width: 120px; /* Adjust width as needed */
+            height: 42px; /* Keeps button height consistent */
+            padding: 12px 15px 8px 15px; /* Increased top padding */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+        
+        /* Search Button */
+        .form-buttons button {
+            background-color: #007bff;
+            color: #fff;
+        }
+        
+        .form-buttons button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Clear Button (Fixing Height Issue) */
+        .form-buttons .clear-button {
+            background-color: #dc3545;
+            color: #fff;
+            text-decoration: none;
+            display: flex; /* Make it behave like a button */
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box; /* Ensures padding doesn't increase size */
+        }
+        
+        .form-buttons .clear-button:hover {
+            background-color: #c82333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+    </style>
+</head>
+<body>
+    <a href="{% url 'admin:track_traceabilitydata_changelist' %}" class="database-btn">💾</a>
+    <a href="{% url 'combined_page' %}" class="database-btn" style="left: 80px;">🏠</a>
+    
+    <div class="container">
+        <h1>Search Parts</h1>
+        <form method="get" class="filters">
+            <div class="form-group">
+                {{ filter.form.part_number.label_tag }}
+                {{ filter.form.part_number }}
+            </div>
+            <div class="form-group">
+                {{ filter.form.start_date.label_tag }}
+                <input type="date" name="start_date" value="{{ request.GET.start_date }}">
+            </div>
+            <div class="form-group">
+                {{ filter.form.end_date.label_tag }}
+                <input type="date" name="end_date" value="{{ request.GET.end_date }}">
+            </div>
+            <div class="form-group">
+                {{ filter.form.shift.label_tag }}
+                {{ filter.form.shift }}
+            </div>
+            <div class="form-buttons">
+                <button type="submit">Search</button>
+                <a href="{% url 'search_parts' %}" class="clear-button">Clear</a>
+            </div>
+            
+        </form>
+        
+        <h2>Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Serial No</th>
+                    <th>Part Number</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Shift</th>
+                    <th>St1 Result</th>
+                    <th>St2 Result</th>
+                    <th>St3 Result</th>
+                    <th>St4 Result</th>
+                    <th>St5 Result</th>
+                    <th>St6 Result</th>
+                    <th>St7 Result</th>
+                    <th>St8 Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in filter.qs %}
+                    <tr>
+                        <td>{{ data.sr_no }}</td>
+                        <td>{{ data.part_number }}</td>
+                        <td>{{ data.date }}</td>
+                        <td>{{ data.time }}</td>
+                        <td>{{ data.shift }}</td>
+                        <td>{{ data.st1_result }}</td>
+                        <td>{{ data.st2_result }}</td>
+                        <td>{{ data.st3_result }}</td>
+                        <td>{{ data.st4_result }}</td>
+                        <td>{{ data.st5_result }}</td>
+                        <td>{{ data.st6_result }}</td>
+                        <td>{{ data.st7_result }}</td>
+                        <td>{{ data.st8_result }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="13">No results found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
