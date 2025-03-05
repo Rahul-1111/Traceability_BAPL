@@ -1,10 +1,12 @@
 "# Traceability_BAPL" 
 
-daphne -p 8000 Traceability.asgi:application
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 pip install whitenoise
 # Add it to MIDDLEWARE in settings.py
 "whitenoise.middleware.WhiteNoiseMiddleware",  # Add this line
 python manage.py collectstatic
+daphne -p 8000 Traceability.asgi:application
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 # Step 1: Check the Current Remote URL
