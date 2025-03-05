@@ -1,5 +1,12 @@
 "# Traceability_BAPL" 
 
+daphne -p 8000 Traceability.asgi:application
+pip install whitenoise
+# Add it to MIDDLEWARE in settings.py
+"whitenoise.middleware.WhiteNoiseMiddleware",  # Add this line
+python manage.py collectstatic
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
 # Step 1: Check the Current Remote URL
 git remote -v
 
@@ -17,3 +24,4 @@ git push -u origin main --force
 
 # resolve issu
 git push origin main
+---------------------------------------------------------------------------------------------------------------------------------------------------

@@ -2,3 +2,6 @@ Django==4.2.18
 pymodbus==3.6.6
 zebra==0.1.0
 qrcode==7.4.2
+django-filter==25.1
+pymcprotocol==0.3.0
+whitenoise==6.7.0
