@@ -204,5 +204,22 @@
             </tbody>
         </table>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Focus the part number input field
+          const partInput = document.querySelector('input[name="part_number"]');
+          if (partInput) {
+            partInput.focus();
+      
+            // Optionally, auto-submit the form when "Enter" is pressed
+            partInput.addEventListener('keypress', function(e) {
+              if (e.key === 'Enter') {
+                e.preventDefault(); // prevent default form submission if needed
+                this.form.submit();
+              }
+            });
+          }
+        });
+      </script>
 </body>
 </html>

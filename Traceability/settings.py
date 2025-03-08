@@ -55,6 +55,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "Traceability.asgi.application"
 WSGI_APPLICATION = "Traceability.wsgi.application"
 
 # Database Configuration
@@ -75,7 +76,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization settings
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
 USE_TZ = True
 
