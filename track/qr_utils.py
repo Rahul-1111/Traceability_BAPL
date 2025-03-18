@@ -119,6 +119,6 @@ def generate_qr_code(prefix, _serial_number=None):  # ✅ `_serial_number` is ig
 
 # Example usage:
 if __name__ == "__main__":
-    sample_prefix = "PDU-S-10594-1"
+    sample_prefix = "556043200181"
     sample_serial = 12345  # ✅ This is ignored, sequential numbers are used
     print(generate_qr_code(sample_prefix, sample_serial))

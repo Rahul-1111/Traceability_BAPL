@@ -35,7 +35,7 @@ REGISTERS = {
 }
 
 # QR Code validation pattern
-QR_PATTERN = re.compile(r"^[A-Z]+-S-\d+-\d+-\d{11}$")
+QR_PATTERN = re.compile(r"^\d{12}-\d{11}$")
 
 def connect_to_plc(plc_ip):
     """Connect to PLC using pymcprotocol."""
