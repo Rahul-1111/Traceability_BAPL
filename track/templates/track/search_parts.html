@@ -15,13 +15,18 @@
             padding: 0;
         }
         .container {
-            width: 80%;
+            width: 96%;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
+            margin-top: 20px;
+            padding: 15px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #007BFF;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            text-align: center;
         }
-        h1, h2 {
+        h2 {
             color: #333;
         }
         form {
@@ -128,14 +133,33 @@
             cursor: pointer;
         }
         
+        header, footer {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 1px 0;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
+    <Header>
+        <h1>SEARCH PARTS</h1>
+    </Header>
+
     <a href="{% url 'admin:track_traceabilitydata_changelist' %}" class="database-btn">💾</a>
     <a href="{% url 'combined_page' %}" class="database-btn" style="left: 80px;">🏠</a>
     
     <div class="container">
-        <h1>Search Parts</h1>
+        
         <form method="get" class="filters">
             <div class="form-group">
                 {{ filter.form.part_number.label_tag }}

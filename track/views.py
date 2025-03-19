@@ -56,9 +56,8 @@ def plc_status(request):
     combined_statuses = {
         "St 1": plc_statuses.get("st1", "disconnected"),
         "St 2": plc_statuses.get("st2", "disconnected"),
-        "St 3 & 4": plc_statuses.get("st3", "disconnected"),  # Shared PLC for St3 & St4
-        "St 5 & 6": plc_statuses.get("st5", "disconnected"),  # Shared PLC for St5 & St6
-        "St 7 & 8": plc_statuses.get("st7", "disconnected"),  # Shared PLC for St7 & St8
+        "St 3 & 5": plc_statuses.get("st3", "disconnected"),  # Shared PLC for St3 & St4
+        "St 4": plc_statuses.get("st5", "disconnected"),  # Shared PLC for St5 & St6
     }
 
     # Count connected and disconnected PLCs
