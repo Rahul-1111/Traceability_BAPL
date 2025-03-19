@@ -183,18 +183,15 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Part Number</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Shift</th>
-                        <th>Station 1 Result</th>
-                        <th>Station 2 Result</th>
-                        <th>Station 3 Result</th>
-                        <th>Station 4 Result</th>
-                        <th>Station 5 Result</th>
-                        <th>Station 6 Result</th>
-                        <th>Station 7 Result</th>
-                        <th>Station 8 Result</th>
+                        <th>PART NUMBER</th>
+                        <th>DATE</th>
+                        <th>TIME</th>
+                        <th>SHIFT</th>
+                        <th>DRILLING ST1</th>
+                        <th>HOT PLATE ST2</th>
+                        <th>POKA YOKE ST3</th>
+                        <th>LEAKAGE ST4</th>
+                        <th>WEIGHT ST5</th>
                     </tr>
                 </thead>
                 <tbody id="torque-table-body">
@@ -231,9 +228,6 @@
                                 <td>${row.st3_result ?? ''}</td>
                                 <td>${row.st4_result ?? ''}</td>
                                 <td>${row.st5_result ?? ''}</td>
-                                <td>${row.st6_result ?? ''}</td>
-                                <td>${row.st7_result ?? ''}</td>
-                                <td>${row.st8_result ?? ''}</td>
                             </tr>
                         `;
                         tableBody.innerHTML += tableRow;

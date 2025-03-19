@@ -2,7 +2,6 @@ import django_filters
 from .models import TraceabilityData
 
 SHIFT_CHOICES = [
-    ("", "Select Shift"),  # Default empty choice
     ("Shift 1", "Shift 1"),
     ("Shift 2", "Shift 2"),
     ("Shift 3", "Shift 3"),

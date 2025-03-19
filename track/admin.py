@@ -5,10 +5,9 @@ class TraceabilityDataAdmin(admin.ModelAdmin):
     list_display = (
         'sr_no', 'part_number', 'date', 'formatted_time', 'shift',
         'st1_result', 'st2_result', 'st3_result', 'st4_result', 'st5_result',
-        'st6_result', 'st7_result', 'st8_result'
     )
     list_filter = ('date', 'shift', 'st1_result', 'st2_result', 'st3_result', 'st4_result', 
-                   'st5_result', 'st6_result', 'st7_result', 'st8_result')
+                   'st5_result')
     search_fields = ('part_number', 'date')
     ordering = ('date',)
     list_per_page = 25

@@ -164,44 +164,38 @@
         <table>
             <thead>
                 <tr>
-                    <th>Serial No</th>
-                    <th>Part Number</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Shift</th>
-                    <th>St1 Result</th>
-                    <th>St2 Result</th>
-                    <th>St3 Result</th>
-                    <th>St4 Result</th>
-                    <th>St5 Result</th>
-                    <th>St6 Result</th>
-                    <th>St7 Result</th>
-                    <th>St8 Result</th>
+                    <th>SR No.</th>
+                    <th>PART NUMBER</th>
+                    <th>DATE</th>
+                    <th>TIME</th>
+                    <th>SHIFT</th>
+                    <th>DRILLING ST1</th>
+                    <th>HOT PLATE ST2</th>
+                    <th>POKA YOKE ST3</th>
+                    <th>LEAKAGE ST4</th>
+                    <th>WEIGHT ST5</th>
                 </tr>
             </thead>
             <tbody>
                 {% for data in filter.qs %}
                     <tr>
-                        <td>{{ data.sr_no }}</td>
-                        <td>{{ data.part_number }}</td>
-                        <td>{{ data.date }}</td>
-                        <td>{{ data.time }}</td>
-                        <td>{{ data.shift }}</td>
-                        <td>{{ data.st1_result }}</td>
-                        <td>{{ data.st2_result }}</td>
-                        <td>{{ data.st3_result }}</td>
-                        <td>{{ data.st4_result }}</td>
-                        <td>{{ data.st5_result }}</td>
-                        <td>{{ data.st6_result }}</td>
-                        <td>{{ data.st7_result }}</td>
-                        <td>{{ data.st8_result }}</td>
+                        <td>{{ data.sr_no|default_if_none:"" }}</td>
+                        <td>{{ data.part_number|default_if_none:"" }}</td>
+                        <td>{{ data.date|default_if_none:"" }}</td>
+                        <td>{{ data.time|default_if_none:"" }}</td>
+                        <td>{{ data.shift|default_if_none:"" }}</td>
+                        <td>{{ data.st1_result|default_if_none:"" }}</td>
+                        <td>{{ data.st2_result|default_if_none:"" }}</td>
+                        <td>{{ data.st3_result|default_if_none:"" }}</td>
+                        <td>{{ data.st4_result|default_if_none:"" }}</td>
+                        <td>{{ data.st5_result|default_if_none:"" }}</td>
                     </tr>
                 {% empty %}
                     <tr>
                         <td colspan="13">No results found.</td>
                     </tr>
                 {% endfor %}
-            </tbody>
+            </tbody>            
         </table>
     </div>
     <script>

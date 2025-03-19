@@ -12,14 +12,11 @@ logger = logging.getLogger(__name__)
 
 # Define PLCs for each station
 PLC_MAPPING = {
-    "st1": {"ip": "192.168.1.100"},
-    "st2": {"ip": "192.168.1.130"},
-    "st3": {"ip": "192.168.1.20"},
-    "st4": {"ip": "192.168.1.20"},
-    "st5": {"ip": "192.168.1.40"},
-    "st6": {"ip": "192.168.1.40"},
-    "st7": {"ip": "192.168.1.60"},
-    "st8": {"ip": "192.168.1.60"},
+    "st1": {"ip": "192.168.1.110"},
+    "st2": {"ip": "192.168.1.120"},
+    "st3": {"ip": "192.168.1.130"},
+    "st4": {"ip": "192.168.1.140"},
+    "st5": {"ip": "192.168.1.130"},
 }
 
 # Define Registers for each station
@@ -29,9 +26,6 @@ REGISTERS = {
     "st3": {"qr": 5300, "result": 5354, "scan_trigger": 5356, "write_signal": 5358},
     "st4": {"qr": 5400, "result": 5454, "scan_trigger": 5456, "write_signal": 5458},
     "st5": {"qr": 5500, "result": 5554, "scan_trigger": 5556, "write_signal": 5558},
-    "st6": {"qr": 5600, "result": 5654, "scan_trigger": 5656, "write_signal": 5658},
-    "st7": {"qr": 5700, "result": 5754, "scan_trigger": 5756, "write_signal": 5758},
-    "st8": {"qr": 5800, "result": 5854, "scan_trigger": 5856, "write_signal": 5858},
 }
 
 # QR Code validation pattern

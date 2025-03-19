@@ -107,9 +107,6 @@ def fetch_torque_data(request):
                 "st3_result": item.st3_result,
                 "st4_result": item.st4_result,
                 "st5_result": item.st5_result,
-                "st6_result": item.st6_result,
-                "st7_result": item.st7_result,
-                "st8_result": item.st8_result,
             }
             for item in data
         ]
