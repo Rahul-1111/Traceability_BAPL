@@ -21,11 +21,11 @@ PLC_MAPPING = {
 
 # Define Registers for each station
 REGISTERS = {
-    "st1": {"qr": 5100, "result": 5154, "scan_trigger": 5156, "write_signal": 5158},
-    "st2": {"qr": 5200, "result": 5254, "scan_trigger": 5256, "write_signal": 5258},
-    "st3": {"qr": 5300, "result": 5354, "scan_trigger": 5356, "write_signal": 5358},
-    "st4": {"qr": 5400, "result": 5454, "scan_trigger": 5456, "write_signal": 5458},
-    "st5": {"qr": 5500, "result": 5554, "scan_trigger": 5556, "write_signal": 5558},
+    "st1": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
+    "st2": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
+    "st3": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
+    "st4": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
+    "st5": {"qr": 3700, "result": 3723, "scan_trigger": 3721, "write_signal": 3725},
 }
 
 # QR Code validation pattern
