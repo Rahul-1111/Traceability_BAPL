@@ -74,7 +74,7 @@ def fetch_station_data():
             mc.close()
             continue
 
-        qr_registers = read_register(mc, reg["qr"], 30)
+        qr_registers = read_register(mc, reg["qr"], 21)
         result = read_register(mc, reg["result"], 1)
         mc.close()
 
