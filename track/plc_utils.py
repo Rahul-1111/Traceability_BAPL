@@ -103,8 +103,8 @@ def update_traceability_data():
                 continue
 
             if not QR_PATTERN.match(part_number):
-                logger.warning(f"🚫 {station}: Invalid QR format - '{part_number}'. Writing 3 to write_signal.")
-                write_register(mc, reg["write_signal"], 3)
+                logger.warning(f"🚫 {station}: Invalid QR format - '{part_number}'. Writing 4 to write_signal.")
+                write_register(mc, reg["write_signal"], 4)
                 mc.close()
                 continue
 
@@ -127,7 +127,7 @@ def update_traceability_data():
 
             if previous_station and previous_status in [None, "NOT OK"]:
                 logger.warning(f"🚨 {station}: Previous station '{previous_station}' result is '{previous_status}'. Blocking operation.")
-                write_register(mc, reg["write_signal"], 5)
+                write_register(mc, reg["write_signal"], 8)
                 mc.close()
                 continue
 
@@ -146,15 +146,15 @@ def update_traceability_data():
             setattr(obj, f"{station}_result", result_value)
             obj.save()
 
-            write_signal = 4 if result_value == "OK" else 1
+            write_signal = 2 if result_value == "OK" else 1
             write_register(mc, reg["write_signal"], write_signal)
 
-            if write_signal in [5, 2]:
+            if write_signal in [1, 2]:
                 time.sleep(1)
                 write_register(mc, reg["scan_trigger"], 0)
 
             mc.close()
-        time.sleep(2)
+        time.sleep(1)
 
 def get_current_shift():
     now = datetime.now().time()
