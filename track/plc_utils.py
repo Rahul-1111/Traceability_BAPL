@@ -149,7 +149,7 @@ def update_traceability_data():
             write_signal = 2 if result_value == "OK" else 1
             write_register(mc, reg["write_signal"], write_signal)
 
-            if write_signal in [1, 2]:
+            if write_signal in [5, 2]:
                 time.sleep(1)
                 write_register(mc, reg["scan_trigger"], 0)
 
