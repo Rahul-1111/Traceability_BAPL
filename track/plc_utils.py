@@ -14,22 +14,22 @@ logger = logging.getLogger(__name__)
 PLC_MAPPING = {
     "st1": {"ip": "192.168.1.110"},
     "st2": {"ip": "192.168.1.120"},
-    "st3": {"ip": "192.168.1.130"},
-    "st4": {"ip": "192.168.1.140"},
+    "st3": {"ip": "192.168.1.140"},
+    "st4": {"ip": "192.168.1.130"},
     "st5": {"ip": "192.168.1.130"},
 }
 
-# Define Registers for each station (Fixed for st4)
+# Define Registers for each station (Fixed for st3)
 REGISTERS = {
     "st1": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
     "st2": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
-    "st3": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
-    "st4": [
+    "st3": [
         {"qr": 2700, "result": 2723, "scan_trigger": 2727, "write_signal": 2725},
         {"qr": 2740, "result": 2763, "scan_trigger": 2767, "write_signal": 2765},
         {"qr": 2780, "result": 2803, "scan_trigger": 2807, "write_signal": 2805},
         {"qr": 2820, "result": 2843, "scan_trigger": 2847, "write_signal": 2845},
     ],
+    "st4": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
     "st5": {"qr": 3700, "result": 3723, "scan_trigger": 3721, "write_signal": 3725},
 }
 

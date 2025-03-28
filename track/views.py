@@ -91,15 +91,36 @@ def generate_qr_code_view(request):
             logger.error(f"Unexpected error: {e}", exc_info=True)
             return JsonResponse({"error": str(e)}, status=500)
 
+from datetime import date
+from django.db.models import Q
+
 def fetch_torque_data(request):
     if request.method == "GET":
-        data = TraceabilityData.objects.all()
+        today = date.today()  # Get today's date
         
+        # Filter for today's records
+        today_records = TraceabilityData.objects.filter(date=today)
+
+        # Filter for "NOT OK" or NULL/blank records (without date restriction)
+        not_ok_or_null_records = TraceabilityData.objects.filter(
+            Q(st1_result="NOT OK") | Q(st2_result="NOT OK") |
+            Q(st3_result="NOT OK") | Q(st4_result="NOT OK") |
+            Q(st5_result="NOT OK") |
+            Q(st1_result__isnull=True) | Q(st2_result__isnull=True) |
+            Q(st3_result__isnull=True) | Q(st4_result__isnull=True) |
+            Q(st5_result__isnull=True) |
+            Q(st1_result="") | Q(st2_result="") | Q(st3_result="") |
+            Q(st4_result="") | Q(st5_result="")
+        )
+
+        # Combine both querysets and order by date & time (newest first)
+        combined_data = (today_records | not_ok_or_null_records).distinct().order_by('-date', '-time')
+
         formatted_data = [
             {
                 "part_number": item.part_number,
                 "date": item.date.strftime("%Y-%m-%d") if item.date else "",
-                "time": item.time.strftime("%H:%M:%S") if item.time else "",  # ✅ Time formatted to HHMMSS
+                "time": item.time.strftime("%H:%M:%S") if item.time else "",
                 "shift": item.shift,
                 "st1_result": item.st1_result,
                 "st2_result": item.st2_result,
@@ -107,10 +128,10 @@ def fetch_torque_data(request):
                 "st4_result": item.st4_result,
                 "st5_result": item.st5_result,
             }
-            for item in data
+            for item in combined_data
         ]
         
-        return JsonResponse({"data": formatted_data})  # ✅ JSON with formatted time
+        return JsonResponse({"data": formatted_data})
 
 from .filters import TraceabilityDataFilter
 
