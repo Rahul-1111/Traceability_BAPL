@@ -147,7 +147,7 @@ def update_traceability_data():
             existing_ok = getattr(obj, f"{station}_result", None) == "OK"
 
             if existing_ok:
-                write_register(mc, reg["write_signal"], 2)
+                write_register(mc, reg["write_signal"], 16)
                 write_register(mc, reg["scan_trigger"], 0)
                 logger.info(f"🟢 {station}: Part '{part_number}' is already OK. Sending 2.")
                 mc.close()
@@ -159,10 +159,10 @@ def update_traceability_data():
             setattr(obj, f"{station}_result", result_value)
             obj.save()
 
-            write_signal = 2 if result_value == "OK" else 1
+            write_signal = 2 if result_value == "OK" else 1  # ✅ Changed OK signal from 2 to 16
             write_register(mc, reg["write_signal"], write_signal)
 
-            if write_signal in [5, 2]:
+            if write_signal in [5, 2]:  # ✅ Updated reset condition
                 time.sleep(1)
                 write_register(mc, reg["scan_trigger"], 0)
 
