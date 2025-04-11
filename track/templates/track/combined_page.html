@@ -188,10 +188,11 @@
                         <th>TIME</th>
                         <th>SHIFT</th>
                         <th>DRILLING ST1</th>
-                        <th>HOT PLATE ST2</th>
+                        <th>VACCUM ST2</th>
+                        <th>HOT PLATE ST3</th>
                         <th>LEAKAGE ST4</th>
-                        <th>POKA YOKE ST3</th>
-                        <th>WEIGHT ST5</th>
+                        <th>POKA YOKE ST5</th>
+                        <th>WEIGHT ST6</th>
                     </tr>
                 </thead>
                 <tbody id="torque-table-body">
@@ -228,6 +229,7 @@
                                 <td>${row.st3_result ?? ''}</td>
                                 <td>${row.st4_result ?? ''}</td>
                                 <td>${row.st5_result ?? ''}</td>
+                                <td>${row.st6_result ?? ''}</td>
                             </tr>
                         `;
                         tableBody.innerHTML += tableRow;

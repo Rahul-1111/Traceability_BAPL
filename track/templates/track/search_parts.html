@@ -194,10 +194,11 @@
                     <th>TIME</th>
                     <th>SHIFT</th>
                     <th>DRILLING ST1</th>
-                    <th>HOT PLATE ST2</th>
+                    <th>VACCUM ST2</th>
+                    <th>HOT PLATE ST3</th>
                     <th>LEAKAGE ST4</th>
-                    <th>POKA YOKE ST3</th>
-                    <th>WEIGHT ST5</th>
+                    <th>POKA YOKE ST5</th>
+                    <th>WEIGHT ST6</th>
                 </tr>
             </thead>
             <tbody>
@@ -213,6 +214,7 @@
                         <td>{{ data.st3_result|default_if_none:"" }}</td>
                         <td>{{ data.st4_result|default_if_none:"" }}</td>
                         <td>{{ data.st5_result|default_if_none:"" }}</td>
+                        <td>{{ data.st6_result|default_if_none:"" }}</td>
                     </tr>
                 {% empty %}
                     <tr>

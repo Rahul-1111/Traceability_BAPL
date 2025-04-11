@@ -11,6 +11,7 @@ class TraceabilityData(models.Model):
     st3_result = models.CharField(max_length=10, null=True, blank=True)  # Station 3 Result
     st4_result = models.CharField(max_length=10, null=True, blank=True)  # Station 4 Result
     st5_result = models.CharField(max_length=10, null=True, blank=True)  # Station 5 Result
+    st6_result = models.CharField(max_length=10, null=True, blank=True)  # Station 5 Result
 
     def __str__(self):
         return f"{self.sr_no} - {self.part_number}"

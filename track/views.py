@@ -105,12 +105,12 @@ def fetch_torque_data(request):
         not_ok_or_null_records = TraceabilityData.objects.filter(
             Q(st1_result="NOT OK") | Q(st2_result="NOT OK") |
             Q(st3_result="NOT OK") | Q(st4_result="NOT OK") |
-            Q(st5_result="NOT OK") |
+            Q(st5_result="NOT OK") | Q(st6_result="NOT OK") |
             Q(st1_result__isnull=True) | Q(st2_result__isnull=True) |
             Q(st3_result__isnull=True) | Q(st4_result__isnull=True) |
-            Q(st5_result__isnull=True) |
+            Q(st5_result__isnull=True) | Q(st6_result__isnull=True) |
             Q(st1_result="") | Q(st2_result="") | Q(st3_result="") |
-            Q(st4_result="") | Q(st5_result="")
+            Q(st4_result="") | Q(st5_result="") | Q(st6_result="")
         )
 
         # Combine both querysets and order by date & time (newest first)
@@ -127,6 +127,7 @@ def fetch_torque_data(request):
                 "st3_result": item.st3_result,
                 "st4_result": item.st4_result,
                 "st5_result": item.st5_result,
+                "st6_result": item.st6_result,
             }
             for item in combined_data
         ]
