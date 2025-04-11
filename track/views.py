@@ -39,28 +39,13 @@ plc_monitor_thread.start()
 
 def plc_status(request):
     """Return PLC statuses with combined stations for shared PLCs."""
-    plc_statuses = {}
-
-    for station, plc in PLC_MAPPING.items():
-        plc_ip = plc.get("ip")  
-        if not plc_ip:
-            continue  # Skip stations with missing IPs
-
-        client = ModbusTcpClient(plc_ip, port=5007, timeout=1)
-        is_connected = client.connect()
-        client.close()
-
-        plc_statuses[station] = "connected" if is_connected else "disconnected"
-
-    # Combine shared PLCs
     combined_statuses = {
         "St 1 & 2": plc_statuses.get("st1", "disconnected"),
-        "St 3": plc_statuses.get("st2", "disconnected"),
-        "St 4 & 5": plc_statuses.get("st3", "disconnected"),  # Shared PLC for St3 & St4
-        "St 6": plc_statuses.get("st5", "disconnected"),  # Shared PLC for St5 & St6
+        "St 3": plc_statuses.get("st3", "disconnected"),
+        "St 4": plc_statuses.get("st4", "disconnected"),
+        "St 5 & 6": plc_statuses.get("st6", "disconnected"),
     }
 
-    # Count connected and disconnected PLCs
     connected_count = sum(1 for status in combined_statuses.values() if status == "connected")
     disconnected_count = sum(1 for status in combined_statuses.values() if status == "disconnected")
 
