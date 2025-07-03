@@ -142,8 +142,8 @@ def export_to_excel(request):
     # Define headers
     headers = [
         "SR No", "Part Number", "Date", "Time", "Shift",
-        "ST1 Result", "ST2 Result", "ST3 Result",
-        "ST4 Result", "ST5 Result", "ST6 Result"
+        "DRILLING ST1", "VACCUM ST2", "HOT PLATE ST3",
+        "LEAKAGE ST4", "POKA YOKE ST5", "WEIGHT ST6"
     ]
     ws.append(headers)
 
