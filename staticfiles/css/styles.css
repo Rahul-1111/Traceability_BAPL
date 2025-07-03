@@ -16,3 +16,15 @@
     background-color: #0056b3;
     transform: scale(1.1);
 }
+
+.ok-cell {
+    background-color: green; /* light green */
+    font-weight: bold;
+    color: black;
+}
+
+.not-ok-cell {
+    background-color: red; /* light red */
+    font-weight: bold;
+    color: black;
+}

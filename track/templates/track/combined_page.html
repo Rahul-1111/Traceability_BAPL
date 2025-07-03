@@ -157,6 +157,19 @@
             background-color: #0056b3;
             transform: scale(1.1);
         }
+
+        .ok-cell {
+            background-color: green; /* light green */
+            font-weight: bold;
+            color: black;
+        }
+        
+        .not-ok-cell {
+            background-color: red; /* light red */
+            font-weight: bold;
+            color: black;
+        }        
+        
     </style>    
 
     <!-- Main Content Section -->
@@ -208,14 +221,19 @@
     </footer>
 
     <script>
-        // Function to fetch torque data and update the table
+        function getResultClass(result) {
+            if (!result) return "";
+            let normalized = result.trim().toUpperCase();
+            return normalized === "OK" ? "ok-cell" : "not-ok-cell";
+        }
+        
         function fetchTableData() {
             $.ajax({
                 url: "{% url 'fetch_torque_data' %}",
                 method: "GET",
                 success: function(response) {
                     const tableBody = document.getElementById("torque-table-body");
-                    tableBody.innerHTML = "";  // Clear current table content
+                    tableBody.innerHTML = "";
         
                     response.data.forEach(row => {
                         const tableRow = `
@@ -224,12 +242,12 @@
                                 <td>${row.date ?? ''}</td>
                                 <td>${row.time ?? ''}</td>
                                 <td>${row.shift ?? ''}</td>
-                                <td>${row.st1_result ?? ''}</td>
-                                <td>${row.st2_result ?? ''}</td>
-                                <td>${row.st3_result ?? ''}</td>
-                                <td>${row.st4_result ?? ''}</td>
-                                <td>${row.st5_result ?? ''}</td>
-                                <td>${row.st6_result ?? ''}</td>
+                                <td class="${getResultClass(row.st1_result)}">${row.st1_result ?? ''}</td>
+                                <td class="${getResultClass(row.st2_result)}">${row.st2_result ?? ''}</td>
+                                <td class="${getResultClass(row.st3_result)}">${row.st3_result ?? ''}</td>
+                                <td class="${getResultClass(row.st4_result)}">${row.st4_result ?? ''}</td>
+                                <td class="${getResultClass(row.st5_result)}">${row.st5_result ?? ''}</td>
+                                <td class="${getResultClass(row.st6_result)}">${row.st6_result ?? ''}</td>
                             </tr>
                         `;
                         tableBody.innerHTML += tableRow;
@@ -240,7 +258,7 @@
                 }
             });
         }
-
+        
         // Fetch data every 2 seconds
         setInterval(fetchTableData, 2000);
         document.addEventListener("DOMContentLoaded", fetchTableData);
