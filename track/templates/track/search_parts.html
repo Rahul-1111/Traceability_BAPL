@@ -180,6 +180,7 @@
             <div class="form-buttons">
                 <button type="submit">Search</button>
                 <a href="{% url 'search_parts' %}" class="clear-button">Clear</a>
+                <a href="{% url 'export_excel' %}?{{ request.GET.urlencode }}" class="clear-button" style="background-color: green;">Export Excel</a>
             </div>
             
         </form>

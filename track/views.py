@@ -125,3 +125,49 @@ def search_parts(request):
     queryset = TraceabilityData.objects.all()
     filter = TraceabilityDataFilter(request.GET, queryset=queryset)
     return render(request, 'track/search_parts.html', {'filter': filter})
+# download excel data
+import openpyxl
+from openpyxl.utils import get_column_letter
+from django.http import HttpResponse
+
+def export_to_excel(request):
+    queryset = TraceabilityData.objects.all()
+    filter = TraceabilityDataFilter(request.GET, queryset=queryset)
+    filtered_data = filter.qs
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Traceability Data"
+
+    # Define headers
+    headers = [
+        "SR No", "Part Number", "Date", "Time", "Shift",
+        "ST1 Result", "ST2 Result", "ST3 Result",
+        "ST4 Result", "ST5 Result", "ST6 Result"
+    ]
+    ws.append(headers)
+
+    for obj in filtered_data:
+        ws.append([
+            obj.sr_no,
+            obj.part_number,
+            obj.date.strftime("%Y-%m-%d") if obj.date else "",
+            obj.time.strftime("%H:%M:%S") if obj.time else "",
+            obj.shift,
+            obj.st1_result,
+            obj.st2_result,
+            obj.st3_result,
+            obj.st4_result,
+            obj.st5_result,
+            obj.st6_result
+        ])
+
+    # Auto column width
+    for col_num, column_title in enumerate(headers, 1):
+        column_letter = get_column_letter(col_num)
+        ws.column_dimensions[column_letter].width = 18
+
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = 'attachment; filename="traceability_data.xlsx"'
+    wb.save(response)
+    return response
