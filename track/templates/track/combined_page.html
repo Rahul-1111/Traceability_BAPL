@@ -3,10 +3,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TRACEABILITY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Traceability Management System - Track parts through manufacturing stations">
+    <meta name="author" content="BAPL">
+    <title>TRACEABILITY - Manufacturing System</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
     <script src="{% static 'jquery-3.6.0.min.js' %}"></script>
     <style>
-        /* General Styles */
+        * { box-sizing: border-box; }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
@@ -21,19 +26,14 @@
             background-color: #007BFF;
             color: white;
             text-align: center;
-            padding: 1px 0;
+            padding: 15px 0;
         }
 
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
+        header h1 { margin: 0; color: #ffffff; }
+        footer p { margin: 5px 0; }
 
-        h1 {
-            color:  #ffffff;
-        }
+        .content { flex: 1; padding: 20px; }
 
-        /* Section Styles */
         .section {
             border: 2px solid #007BFF;
             border-radius: 8px;
@@ -43,8 +43,30 @@
             text-align: center;
         }
 
-        /* Button & Dropdown Styles */
-        .form-button, #prefix {
+        .section h2 { color: #333; margin-top: 0; }
+
+        .form-group { margin: 15px 0; }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        #prefix {
+            background-color: #f4f7fa;
+            color: #333;
+            padding: 10px;
+            font-size: 15px;
+            border-radius: 4px;
+            border: 2px solid #007BFF;
+            width: 100%;
+            max-width: 300px;
+            cursor: pointer;
+        }
+
+        .form-button {
             background-color: #007BFF;
             color: white;
             padding: 10px 20px;
@@ -53,92 +75,113 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 10px;
+            transition: background-color 0.3s, opacity 0.3s;
         }
 
-        #prefix {
-            background-color:rgb(244, 247, 250);
-            color: Black;
-        }
+        .form-button:hover:not(:disabled) { background-color: #0056b3; }
+        .form-button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .form-button:hover {
-            background-color: #0056b3;
-        }
+        #qr-response { margin-top: 15px; min-height: 20px; }
 
-        #prefix {
-            width: 10%;
+        #qr-response.error {
+            color: #d32f2f;
+            background-color: #ffebee;
             padding: 10px;
-            font-size: 15px;
             border-radius: 4px;
-            border: 2px solid #007BFF;
+            border-left: 4px solid #d32f2f;
         }
 
-        /* QR Display */
-        .qr-display {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 10px;
-            color: #007BFF;
+        #qr-response.success {
+            color: #388e3c;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #388e3c;
         }
 
-        /* Table Styles */
+        #qr-response.warning {
+            color: #f57c00;
+            background-color: #fff3e0;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #f57c00;
+        }
+
+        /* ✅ Table Styles */
+        .table-wrapper {
+            overflow-x: auto;  /* ✅ Horizontal scroll for wide table */
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            min-width: 1200px;  /* ✅ Prevent squishing */
         }
 
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: left;
+            text-align: center;
+            white-space: nowrap;  /* ✅ Prevent wrapping */
         }
 
-        th {
-            background-color: #007BFF;
-            color: white;
+        th { background-color: #007BFF; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        tr:hover { background-color: #e9ecef; }
+
+        /* ✅ Station Header Groups */
+        th.station-header {
+            background-color: #0056b3;
+            font-size: 13px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        /* ✅ Status Cells */
+        .ok-cell {
+            background-color: #c8e6c9;
+            font-weight: bold;
+            color: #1b5e20;
         }
 
+        .not-ok-cell {
+            background-color: #ffcdd2;
+            font-weight: bold;
+            color: #b71c1c;
+        }
+
+        .pending-cell {
+            background-color: #fff9c4;
+            color: #f57f17;
+            font-weight: bold;
+        }
+
+        /* ✅ Datetime cell */
+        .datetime-cell {
+            font-size: 11px;
+            color: #555;
+        }
+
+        /* ✅ PLC Status */
         .plc-status {
             font-size: 12px;
             font-weight: bold;
             padding: 10px 15px;
-            color: white;
-            background-color:rgb(252, 253, 254); /* Dark background for better visibility */
+            background-color: #ffffff;
             border-radius: 5px;
-            position: absolute;
-            top: 10px;  /* Distance from the top */
-            right: 20px; /* Distance from the right */
-            text-align: center;
-            box-shadow: 2px 2px 8px rgba(111, 224, 224, 0.25);
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 100;
+            border: 1px solid #ddd;
+            max-width: 300px;
         }
-        
-        .connected {
-            color: green;
-            font-weight: bold;
-        }
-        
-        .disconnected {
-            color: red;
-            font-weight: bold;
-        }        
 
-    </style>
-</head>
-<body>
-    <!-- Header Section -->
-    <header>
-        <h1>TRACEABILITY</h1>
-        <div id="plc-status" class="plc-status">🔴 Checking PLC Status...</div>
-    </header>
+        .plc-status p { margin: 5px 0; font-size: 11px; }
+        .connected { color: green; }
+        .disconnected { color: red; }
 
-    <a href="http://127.0.0.1:8000/admin/track/traceabilitydata/" class="database-btn">💾</a>
-    <a href="http://127.0.0.1:8000/search/" class="database-btn" style="left: 80px;">🔍</a>
-    
-    <style>
+        /* ✅ Database Buttons */
         .database-btn {
             position: fixed;
             top: 20px;
@@ -149,171 +192,317 @@
             border-radius: 50%;
             font-size: 20px;
             text-decoration: none;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             transition: background-color 0.3s, transform 0.2s;
-        }
-    
-        .database-btn:hover {
-            background-color: #0056b3;
-            transform: scale(1.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            z-index: 99;
         }
 
-        .ok-cell {
-            background-color: green; /* light green */
-            font-weight: bold;
-            color: black;
-        }
-        
-        .not-ok-cell {
-            background-color: red; /* light red */
-            font-weight: bold;
-            color: black;
-        }        
-        
-    </style>    
+        .database-btn:nth-of-type(2) { left: 65px; }
+        .database-btn:hover { background-color: #0056b3; transform: scale(1.1); }
 
-    <!-- Main Content Section -->
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 5px;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .data-error {
+            color: red;
+            text-align: center;
+            padding: 20px;
+            background-color: #ffebee;
+            border-radius: 4px;
+            border-left: 4px solid #d32f2f;
+        }
+
+        @media (max-width: 768px) {
+            .content { padding: 10px; }
+            .section { padding: 10px; }
+            table { font-size: 11px; }
+            th, td { padding: 5px; }
+            .database-btn { width: 40px; height: 40px; font-size: 16px; }
+            #prefix { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>TRACEABILITY MANAGEMENT SYSTEM</h1>
+    </header>
+
+    <!-- Database Navigation Buttons -->
+    <a href="{% url 'admin:track_traceabilitydata_changelist' %}"
+       class="database-btn" title="View Database">💾</a>
+    <a href="{% url 'search_parts' %}"
+       class="database-btn" title="Search Parts">🔍</a>
+
+    <!-- PLC Status -->
+    <div id="plc-status" class="plc-status">
+        <div style="text-align: center;">
+            <strong>PLC Status</strong>
+            <div class="loading">⏳</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
     <div class="content">
+
         <!-- QR Code Generator Section -->
         <div class="section">
             <h2>QR Code Generator</h2>
-
-            <!-- Dropdown for selecting prefix -->
-            <label for="prefix">Select Part Number:</label>
-            <select id="prefix" name="prefix">
-                <option value="556043200181">15L-AIR TANK</option>
-                <option value="556043200182">20L-AIR TANK</option>
-                <option value="556043200183">30L-AIR TANK</option>
-            </select>
-
-            <button id="print-button" class="form-button">Print QR Code</button>
-            <div id="qr-response"></div>
+            <div class="form-group">
+                <label for="prefix">Select Part Number:</label>
+                <select id="prefix" name="prefix" aria-label="Select part number">
+                    <option value="">-- Choose a part --</option>
+                    <option value="556043200181">15L-AIR TANK</option>
+                    <option value="556043200182">20L-AIR TANK</option>
+                    <option value="556043200183">30L-AIR TANK</option>
+                </select>
+            </div>
+            <button id="print-button" class="form-button" aria-label="Generate and print QR code">
+                Print QR Code
+            </button>
+            <div id="qr-response" role="status" aria-live="polite"></div>
         </div>
 
         <!-- Torque Data Records Section -->
         <div class="section">
             <h2>Torque Data Records</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>PART NUMBER</th>
-                        <th>DATE</th>
-                        <th>TIME</th>
-                        <th>SHIFT</th>
-                        <th>DRILLING ST1</th>
-                        <th>VACCUM ST2</th>
-                        <th>HOT PLATE ST3</th>
-                        <th>LEAKAGE ST4</th>
-                        <th>POKA YOKE ST5</th>
-                        <th>WEIGHT ST6</th>
-                    </tr>
-                </thead>
-                <tbody id="torque-table-body">
-                    <!-- Table rows will be populated by JavaScript -->
-                </tbody>
-            </table>
+            <div class="table-wrapper">  <!-- ✅ Scrollable wrapper -->
+                <table role="table" aria-label="Torque data test results">
+                    <thead>
+                        <tr>
+                            <!-- ✅ Main Info -->
+                            <th rowspan="2">PART NUMBER</th>
+                            <th rowspan="2">DATE</th>
+                            <th rowspan="2">TIME</th>
+                            <th rowspan="2">SHIFT</th>
+                            <!-- ✅ Station Group Headers -->
+                            <th colspan="2" class="station-header">DRILLING ST1</th>
+                            <th colspan="2" class="station-header">VACUUM ST2</th>
+                            <th colspan="2" class="station-header">HOT PLATE ST3</th>
+                            <th colspan="2" class="station-header">LEAKAGE ST4</th>
+                            <th colspan="2" class="station-header">POKA YOKE ST5</th>
+                            <th colspan="2" class="station-header">WEIGHT ST6</th>
+                        </tr>
+                        <tr>
+                            <!-- ✅ Station Sub Headers -->
+                            <th>RESULT</th><th>DATETIME</th>
+                            <th>RESULT</th><th>DATETIME</th>
+                            <th>RESULT</th><th>DATETIME</th>
+                            <th>RESULT</th><th>DATETIME</th>
+                            <th>RESULT</th><th>DATETIME</th>
+                            <th>RESULT</th><th>DATETIME</th>
+                        </tr>
+                    </thead>
+                    <tbody id="torque-table-body">
+                        <tr>
+                            <td colspan="16" class="data-error">Loading data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Footer Section -->
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2025 BAPL TRACEABILITY.</p>
+        <p>&copy; 2025 BAPL TRACEABILITY. All rights reserved.</p>
     </footer>
 
     <script>
+        const CONFIG = {
+            PLC_CHECK_INTERVAL: 2000,
+            TABLE_REFRESH_INTERVAL: 5000,
+            AJAX_TIMEOUT: 5000,
+            RETRY_DELAY: 5000
+        };
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!(/^http:/.test(settings.url) || /^https:/.test(settings.url))) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                }
+            }
+        });
+
+        // ✅ Result class
         function getResultClass(result) {
-            if (!result) return "";
+            if (!result) return "pending-cell";
             let normalized = result.trim().toUpperCase();
             return normalized === "OK" ? "ok-cell" : "not-ok-cell";
         }
-        
+
+        // ✅ Format datetime
+        function formatDatetime(dt) {
+            if (!dt) return '<span style="color:#aaa;">--</span>';
+            try {
+                const d = new Date(dt);
+                const date = d.toLocaleDateString('en-GB');  // DD/MM/YYYY
+                const time = d.toLocaleTimeString('en-GB');  // HH:MM:SS
+                return `<span class="datetime-cell">${date}<br>${time}</span>`;
+            } catch {
+                return dt;
+            }
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = $(elementId);
+            element.removeClass('error success warning').addClass(type);
+            element.text(message);
+        }
+
+        function validatePrefix(prefix) {
+            return prefix && /^\d{12}$/.test(prefix);
+        }
+
+        // ✅ Fetch table data
         function fetchTableData() {
             $.ajax({
                 url: "{% url 'fetch_torque_data' %}",
                 method: "GET",
+                timeout: CONFIG.AJAX_TIMEOUT,
                 success: function(response) {
                     const tableBody = document.getElementById("torque-table-body");
-                    tableBody.innerHTML = "";
-        
-                    response.data.forEach(row => {
-                        const tableRow = `
+
+                    if (!response.data || response.data.length === 0) {
+                        tableBody.innerHTML = `
                             <tr>
-                                <td>${row.part_number ?? ''}</td>
-                                <td>${row.date ?? ''}</td>
-                                <td>${row.time ?? ''}</td>
-                                <td>${row.shift ?? ''}</td>
-                                <td class="${getResultClass(row.st1_result)}">${row.st1_result ?? ''}</td>
-                                <td class="${getResultClass(row.st2_result)}">${row.st2_result ?? ''}</td>
-                                <td class="${getResultClass(row.st3_result)}">${row.st3_result ?? ''}</td>
-                                <td class="${getResultClass(row.st4_result)}">${row.st4_result ?? ''}</td>
-                                <td class="${getResultClass(row.st5_result)}">${row.st5_result ?? ''}</td>
-                                <td class="${getResultClass(row.st6_result)}">${row.st6_result ?? ''}</td>
-                            </tr>
-                        `;
-                        tableBody.innerHTML += tableRow;
+                                <td colspan="16" style="text-align:center; padding:20px;">
+                                    No data available yet.
+                                </td>
+                            </tr>`;
+                        return;
+                    }
+
+                    let html = "";
+                    response.data.forEach(row => {
+                        html += `
+                            <tr>
+                                <td>${row.part_number || ''}</td>
+                                <td>${row.date || ''}</td>
+                                <td>${row.time || ''}</td>
+                                <td>${row.shift || 'Unknown'}</td>
+
+                                <td class="${getResultClass(row.st1_result)}">${row.st1_result || 'PENDING'}</td>
+                                <td>${formatDatetime(row.st1_datetime)}</td>
+
+                                <td class="${getResultClass(row.st2_result)}">${row.st2_result || 'PENDING'}</td>
+                                <td>${formatDatetime(row.st2_datetime)}</td>
+
+                                <td class="${getResultClass(row.st3_result)}">${row.st3_result || 'PENDING'}</td>
+                                <td>${formatDatetime(row.st3_datetime)}</td>
+
+                                <td class="${getResultClass(row.st4_result)}">${row.st4_result || 'PENDING'}</td>
+                                <td>${formatDatetime(row.st4_datetime)}</td>
+
+                                <td class="${getResultClass(row.st5_result)}">${row.st5_result || 'PENDING'}</td>
+                                <td>${formatDatetime(row.st5_datetime)}</td>
+
+                                <td class="${getResultClass(row.st6_result)}">${row.st6_result || 'PENDING'}</td>
+                                <td>${formatDatetime(row.st6_datetime)}</td>
+                            </tr>`;
                     });
+                    tableBody.innerHTML = html;
                 },
                 error: function(xhr, status, error) {
-                    console.error("Failed to fetch data:", error);
+                    const tableBody = document.getElementById("torque-table-body");
+                    let errorMsg = "Failed to load data";
+                    if (status === "timeout") errorMsg = "Request timed out";
+                    else if (xhr.status === 0) errorMsg = "Network error";
+                    else if (xhr.responseJSON?.error) errorMsg = xhr.responseJSON.error;
+
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="16" class="data-error">
+                                ${errorMsg}. Retrying in ${CONFIG.RETRY_DELAY / 1000}s...
+                            </td>
+                        </tr>`;
+                    setTimeout(fetchTableData, CONFIG.RETRY_DELAY);
                 }
             });
         }
-        
-        // Fetch data every 2 seconds
-        setInterval(fetchTableData, 2000);
-        document.addEventListener("DOMContentLoaded", fetchTableData);
 
-        // Generate a unique QR code with prefix and print
-        $("#print-button").click(function() {
-            let prefix = $("#prefix").val();
-    
-            $.ajax({
-                url: "{% url 'generate_qr_codes' %}",
-                method: "POST",
-                data: { prefix: prefix, csrfmiddlewaretoken: "{{ csrf_token }}" },
-                success: function(response) {
-                    $("#qr-response").html(`<p style="color:green;">${response.message}</strong></p>`);
-                },
-                error: function(xhr) {
-                    $("#qr-response").html(`<p style="color:red;">Error: ${xhr.responseText}</p>`);
-                }
-            });
-        });
-
+        // ✅ Check PLC status
         function checkAllPLCStatus() {
             $.ajax({
                 url: "{% url 'plc_statuses' %}",
                 method: "GET",
+                timeout: CONFIG.AJAX_TIMEOUT,
                 success: function(response) {
-                    let statusHTML = "";
-                    let connectedCount = response.connected_count;
-                    let disconnectedCount = response.disconnected_count;
-        
-                    // Iterate over the combined PLC statuses
+                    let statusHTML = "<strong>PLC Status</strong><div style='margin-top:8px;'>";
                     Object.keys(response.plc_statuses).forEach(station => {
                         let status = response.plc_statuses[station];
-                        let statusText = status === "connected" ? "🟢 Connected" : "🔴 Disconnected";
-                        let colorStyle = status === "connected" ? "color: green;" : "color: red;";
-                        statusHTML += `<p style="${colorStyle}">${station}: ${statusText}</p>`;
+                        let icon = status === "connected" ? "🟢" : "🔴";
+                        let statusClass = status === "connected" ? "connected" : "disconnected";
+                        statusHTML += `<p><span class="${statusClass}">${icon} ${station}</span></p>`;
                     });
-        
-                    // Update the PLC status section
-                    $("#plc-status").html(`
-                       
-                        ${statusHTML}
-                        
-                    `);
+                    statusHTML += `<small style="margin-top:8px; display:block;">Connected: ${response.connected_count}/${response.connected_count + response.disconnected_count}</small></div>`;
+                    document.getElementById("plc-status").innerHTML = statusHTML;
                 },
                 error: function() {
-                    $("#plc-status").html("<p class='disconnected'>🔴 Error fetching PLC status</p>");
+                    document.getElementById("plc-status").innerHTML = `
+                        <strong>PLC Status</strong>
+                        <p class="disconnected">🔴 Error fetching status</p>`;
                 }
             });
         }
-        
-        // Refresh PLC status every 2 seconds
-        setInterval(checkAllPLCStatus, 500);
-        $(document).ready(checkAllPLCStatus);
-        
+
+        // ✅ Print QR Code
+        $("#print-button").click(function() {
+            const button = $(this);
+            const prefix = $("#prefix").val();
+
+            if (!prefix) {
+                showMessage("#qr-response", "Please select a part number", "warning");
+                return;
+            }
+            if (!validatePrefix(prefix)) {
+                showMessage("#qr-response", "Invalid prefix format (must be 12 digits)", "error");
+                return;
+            }
+
+            button.prop("disabled", true).html("Generating...<span class='loading'>⏳</span>");
+
+            $.ajax({
+                url: "{% url 'generate_qr_codes' %}",
+                method: "POST",
+                data: { prefix: prefix },
+                dataType: "json",
+                timeout: CONFIG.AJAX_TIMEOUT,
+                success: function(response) {
+                    showMessage("#qr-response", response.message, "success");
+                    setTimeout(fetchTableData, 500);
+                },
+                error: function(xhr) {
+                    let errorMsg = "Error generating QR code";
+                    if (xhr.responseJSON?.error) errorMsg = xhr.responseJSON.error;
+                    else if (xhr.status === 0) errorMsg = "Network error";
+                    showMessage("#qr-response", errorMsg, "error");
+                },
+                complete: function() {
+                    button.prop("disabled", false).text("Print QR Code");
+                }
+            });
+        });
+
+        // ✅ Initialize
+        $(document).ready(function() {
+            fetchTableData();
+            checkAllPLCStatus();
+            setInterval(fetchTableData, CONFIG.TABLE_REFRESH_INTERVAL);
+            setInterval(checkAllPLCStatus, CONFIG.PLC_CHECK_INTERVAL);
+        });
     </script>
 </body>
 </html>

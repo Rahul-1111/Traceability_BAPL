@@ -3,6 +3,7 @@ import time
 import logging
 from track.models import TraceabilityData
 from datetime import datetime
+from django.utils import timezone  # ✅ Added for datetime saving
 import struct
 import re
 
@@ -13,17 +14,17 @@ logger = logging.getLogger(__name__)
 # Define PLCs for each station
 PLC_MAPPING = {
     "st1": {"ip": "192.168.1.110"},
-    "st2": {"ip": "192.168.1.110"},  # 🆕 New station
+    "st2": {"ip": "192.168.1.110"},
     "st3": {"ip": "192.168.1.120"},
     "st4": {"ip": "192.168.1.140"},
     "st5": {"ip": "192.168.1.130"},
     "st6": {"ip": "192.168.1.130"},
 }
 
-# Define Registers for each station (Fixed for st3)
+# Define Registers for each station
 REGISTERS = {
     "st1": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
-    "st2": {"qr": 2730, "result": 2753, "scan_trigger": 2751, "write_signal": 2755},  # 🆕
+    "st2": {"qr": 2730, "result": 2753, "scan_trigger": 2751, "write_signal": 2755},
     "st3": {"qr": 2700, "result": 2723, "scan_trigger": 2721, "write_signal": 2725},
     "st4": [
         {"qr": 2700, "result": 2723, "scan_trigger": 2727, "write_signal": 2725},
@@ -38,6 +39,7 @@ REGISTERS = {
 # QR Code validation pattern
 QR_PATTERN = re.compile(r"^\d{12}-\d{11}$")
 
+
 def connect_to_plc(plc_ip):
     mc = pymcprotocol.Type3E()
     try:
@@ -48,6 +50,7 @@ def connect_to_plc(plc_ip):
         logger.error(f"❌ Failed to connect to PLC {plc_ip}: {e}")
         return None
 
+
 def read_register(mc, address, num_registers=1):
     try:
         response = mc.batchread_wordunits(headdevice=f"D{address}", readsize=num_registers)
@@ -56,12 +59,14 @@ def read_register(mc, address, num_registers=1):
         logger.error(f"❌ Error reading register {address}: {e}")
         return None
 
+
 def write_register(mc, address, value):
     try:
         mc.batchwrite_wordunits(headdevice=f"D{address}", values=[value])
         logger.info(f"✅ Wrote {value} to register {address}")
     except Exception as e:
         logger.error(f"❌ Error writing to register {address}: {e}")
+
 
 def fetch_station_data():
     station_data = {}
@@ -85,11 +90,15 @@ def fetch_station_data():
             if qr_registers and result:
                 qr_string = convert_registers_to_string(qr_registers)
                 result_value = "OK" if result[0] == 1 else "NOT OK"
-                station_data[f"{station}_{reg['qr']}"] = {"qr": qr_string, "result": result_value}
+                station_data[f"{station}_{reg['qr']}"] = {
+                    "qr": qr_string,
+                    "result": result_value
+                }
 
         mc.close()
 
     return station_data
+
 
 def convert_registers_to_string(registers):
     try:
@@ -98,6 +107,7 @@ def convert_registers_to_string(registers):
     except Exception as e:
         logger.error(f"❌ Error converting register data: {e}")
         return ""
+
 
 def update_traceability_data():
     while True:
@@ -117,12 +127,14 @@ def update_traceability_data():
             if not mc:
                 continue
 
+            # ✅ Invalid QR format check
             if not QR_PATTERN.match(part_number):
-                logger.warning(f"🚫 {station}: Invalid QR format - '{part_number}'. Writing 4 to write_signal.")
+                logger.warning(f"🚫 {station}: Invalid QR format - '{part_number}'. Writing 4.")
                 write_register(mc, reg["write_signal"], 4)
                 mc.close()
                 continue
 
+            # ✅ Get or Create record
             obj = TraceabilityData.objects.filter(part_number=part_number).first()
 
             if obj:
@@ -136,40 +148,49 @@ def update_traceability_data():
                 )
                 logger.info(f"🟢 Created new record for part: {part_number}")
 
+            # ✅ Check previous station result
             station_num = int(station[2])
             previous_station = f"st{station_num - 1}" if station_num > 1 else None
             previous_status = getattr(obj, f"{previous_station}_result", None) if previous_station else None
 
             if previous_station and previous_status in [None, "NOT OK"]:
-                logger.warning(f"🚨 {station}: Previous station '{previous_station}' result is '{previous_status}'. Blocking operation.")
+                logger.warning(f"🚨 {station}: Previous station '{previous_station}' result is '{previous_status}'. Blocking.")
                 write_register(mc, reg["write_signal"], 8)
                 mc.close()
                 continue
 
+            # ✅ Already OK check
             existing_ok = getattr(obj, f"{station}_result", None) == "OK"
-
             if existing_ok:
                 write_register(mc, reg["write_signal"], 16)
                 write_register(mc, reg["scan_trigger"], 0)
-                logger.info(f"🟢 {station}: Part '{part_number}' is already OK. Sending 2.")
+                logger.info(f"🟢 {station}: Part '{part_number}' already OK. Sending 16.")
                 mc.close()
                 continue
 
+            # ✅ Read result from PLC
             result = read_register(mc, reg["result"], 1)
             result_value = "OK" if result and result[0] == 1 else "NOT OK"
 
-            setattr(obj, f"{station}_result", result_value)
+            # ✅ Save result AND datetime together
+            setattr(obj, f"{station}_result",   result_value)
+            setattr(obj, f"{station}_datetime", timezone.now())  # ✅ KEY CHANGE
             obj.save()
 
-            write_signal = 2 if result_value == "OK" else 1  # ✅ Changed OK signal from 2 to 16
+            logger.info(f"✅ {station.upper()}: '{part_number}' → {result_value} at {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+            # ✅ Write signal to PLC
+            write_signal = 2 if result_value == "OK" else 1
             write_register(mc, reg["write_signal"], write_signal)
 
-            if write_signal in [5, 2]:  # ✅ Updated reset condition
+            if write_signal in [5, 2]:
                 time.sleep(1)
                 write_register(mc, reg["scan_trigger"], 0)
 
             mc.close()
+
         time.sleep(1)
+
 
 def get_current_shift():
     now = datetime.now().time()

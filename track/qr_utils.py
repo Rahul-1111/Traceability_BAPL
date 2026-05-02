@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 # ✅ Get Current Project Directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
-OUTPUT_DIR = os.path.join(BASE_DIR, "Qr")  # ✅ Save in "Qr" folder
-SERIAL_FILE = os.path.join(BASE_DIR, "serial_number.txt")  # ✅ Store last used serial & date
+OUTPUT_DIR = os.path.join(BASE_DIR, "Qr")
+SERIAL_FILE = os.path.join(BASE_DIR, "serial_number.txt")
 
 # ✅ Create output directory if it doesn't exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -31,30 +31,26 @@ def clear_old_qr_codes():
                 logger.error(f"❌ Error deleting file {filename}: {e}")
 
 def get_next_serial_number():
-    """Reads the last serial number from a file, resets if a new month, and updates the file."""
-    current_month = datetime.datetime.now().strftime("%m%y")  # Format: MMYY
+    """Serial starts at 00001, increments each call, resets to 00001 after 99999. No month reset."""
+    last_serial = 0  # ✅ Default
 
     if os.path.exists(SERIAL_FILE):
         with open(SERIAL_FILE, "r") as file:
+            content = file.read().strip()
             try:
-                last_month, last_serial = file.read().strip().split(",")  # Read last month & serial
-                last_serial = int(last_serial)
+                last_serial = int(content)  # ✅ Just read the number, no month
             except ValueError:
-                last_month, last_serial = current_month, 0  # Reset if file is corrupted
-    else:
-        last_month, last_serial = current_month, 0  # Start from 0 if file doesn't exist
+                last_serial = 0  # ✅ Reset if file corrupted
 
-    # ✅ Reset if a new month has started
-    if last_month != current_month:
-        new_serial = 1
+    if last_serial >= 99999:
+        new_serial = 1            # ✅ Rollover 99999 → 00001
     else:
-        new_serial = last_serial + 1
+        new_serial = last_serial + 1  # ✅ Increment
 
-    # ✅ Save the updated month and serial number
     with open(SERIAL_FILE, "w") as file:
-        file.write(f"{current_month},{new_serial}")
+        file.write(str(new_serial))  # ✅ Save number only, no month
 
-    return str(new_serial).zfill(5)  # Ensure 5-digit serial number (e.g., 00001)
+    return str(new_serial).zfill(5)  # ✅ Always 5 digits: 00001
 
 def generate_zpl_qrcode(qr_data):
     """Generates ZPL code for printing a QR code on a Zebra printer."""
@@ -94,17 +90,17 @@ def generate_qrcode_image(qr_data):
     qr.make(fit=True)
     img = qr.make_image(fill="black", back_color="white")
     img.save(filepath)
-    
+
     logger.info(f"🖼️ QR saved: {filepath}")
 
-def generate_qr_code(prefix, _serial_number=None):  # ✅ `_serial_number` is ignored
+def generate_qr_code(prefix, _serial_number=None):
     """Generates QR Code with format: [PREFIX]-DDMMYY[SERIAL]"""
 
-    clear_old_qr_codes()  # ✅ Delete old QR codes before generating a new one
+    clear_old_qr_codes()
 
     now = datetime.datetime.now()
-    date_part = now.strftime("%d%m%y")  # ddmmyy (last two digits of year)
-    unique_serial = get_next_serial_number()  # ✅ Automatically get next serial
+    date_part = now.strftime("%d%m%y")
+    unique_serial = get_next_serial_number()  # ✅ 5-digit serial no month reset
 
     qr_data = f"{prefix}-{date_part}{unique_serial}"  # ✅ Format: PREFIX-DDMMYY00001
 
@@ -120,5 +116,5 @@ def generate_qr_code(prefix, _serial_number=None):  # ✅ `_serial_number` is ig
 # Example usage:
 if __name__ == "__main__":
     sample_prefix = "556043200181"
-    sample_serial = 12345  # ✅ This is ignored, sequential numbers are used
+    sample_serial = 12345  # ✅ Ignored, sequential numbers are used
     print(generate_qr_code(sample_prefix, sample_serial))

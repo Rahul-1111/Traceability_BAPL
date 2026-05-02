@@ -4,243 +4,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Parts</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="description" content="Search and filter traceability data - Manufacturing parts tracking">
+    <meta name="author" content="BAPL">
+    <title>Search Parts - TRACEABILITY System</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 
     <style>
+        * { box-sizing: border-box; }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
+
+        header, footer {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        header h1 { margin: 0; }
+
+        .content { flex: 1; padding: 20px; }
+
         .container {
             width: 96%;
             margin: 0 auto;
-            margin-top: 20px;
             padding: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border: 2px solid #007BFF;
             border-radius: 8px;
             margin-bottom: 20px;
             background-color: #ffffff;
-            text-align: center;
         }
-        h2 {
-            color: #333;
-        }
-        form {
+
+        .container h2 { color: #333; margin-top: 0; }
+
+        form.filters {
             margin-bottom: 20px;
             padding: 20px;
             background-color: #e9ecef;
             border-radius: 5px;
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
         }
-        .form-group {
-            flex: 1;
-            min-width: 150px;
-        }
-        label {
+
+        .form-group { display: flex; flex-direction: column; }
+
+        .form-group label {
             font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
         }
-        input, select {
-            width: 100%;
-            padding: 8px;
+
+        input[type="date"],
+        input[type="text"],
+        select {
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
         }
-        
-        /* Button Container for Proper Alignment */
+
+        input[type="date"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+
         .form-buttons {
-            margin-top: 10px;
             display: flex;
             gap: 10px;
-            align-items: center;
+            align-items: flex-end;
+            flex-wrap: wrap;
         }
-        
-        /* Ensuring Both Buttons Have the Same Size */
-        .form-buttons button, 
-        .form-buttons .clear-button {
-            width: 120px; /* Adjust width as needed */
-            height: 42px; /* Keeps button height consistent */
-            padding: 12px 15px 8px 15px; /* Increased top padding */
+
+        .form-buttons button,
+        .form-buttons a {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 15px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: bold;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-        
-        /* Search Button */
-        .form-buttons button {
-            background-color: #007bff;
-            color: #fff;
-        }
-        
-        .form-buttons button:hover {
-            background-color: #0056b3;
-        }
-        
-        /* Clear Button (Fixing Height Issue) */
-        .form-buttons .clear-button {
-            background-color: #dc3545;
-            color: #fff;
             text-decoration: none;
-            display: flex; /* Make it behave like a button */
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-sizing: border-box; /* Ensures padding doesn't increase size */
+            transition: background-color 0.3s, transform 0.2s;
         }
-        
-        .form-buttons .clear-button:hover {
-            background-color: #c82333;
+
+        .form-buttons button { background-color: #007bff; color: #fff; }
+        .form-buttons button:hover { background-color: #0056b3; transform: translateY(-2px); }
+        .form-buttons button:active { transform: translateY(0); }
+
+        .form-buttons a.clear-button { background-color: #dc3545; color: #fff; }
+        .form-buttons a.clear-button:hover { background-color: #c82333; transform: translateY(-2px); }
+
+        .form-buttons a.export-button { background-color: #28a745; color: #fff; }
+        .form-buttons a.export-button:hover { background-color: #218838; transform: translateY(-2px); }
+
+        /* ✅ Table */
+        .table-wrapper {
+            overflow-x: auto;  /* ✅ Horizontal scroll */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            min-width: 1400px;  /* ✅ Prevent squishing */
         }
+
         th, td {
-            padding: 12px;
-            text-align: left;
+            padding: 10px;
+            text-align: center;
             border-bottom: 1px solid #ddd;
+            white-space: nowrap;
         }
+
         th {
             background-color: #007bff;
             color: #fff;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #e9ecef;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
-            font-size: 12px;
-            cursor: pointer;
+        /* ✅ Station group header */
+        th.station-header {
+            background-color: #0056b3;
+            font-size: 13px;
         }
-        
-        header, footer {
+
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        tr:hover { background-color: #e9ecef; }
+
+        /* ✅ Status Cells */
+        .ok-cell {
+            background-color: #c8e6c9;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+
+        .not-ok-cell {
+            background-color: #ffcdd2;
+            font-weight: bold;
+            color: #b71c1c;
+        }
+
+        .pending-cell {
+            background-color: #fff3cd;
+            font-weight: bold;
+            color: #664d03;
+        }
+
+        /* ✅ Datetime cell */
+        .datetime-cell {
+            font-size: 11px;
+            color: #555;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .database-btn {
+            position: fixed;
+            top: 20px;
+            left: 10px;
             background-color: #007BFF;
             color: white;
-            text-align: center;
-            padding: 1px 0;
+            padding: 8px 12px;
+            border-radius: 50%;
+            font-size: 20px;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            z-index: 99;
         }
 
-        .content {
-            flex: 1;
-            padding: 20px;
+        .database-btn:nth-of-type(2) { left: 65px; }
+        .database-btn:hover { background-color: #0056b3; transform: scale(1.1); }
+
+        @media (max-width: 768px) {
+            .content { padding: 10px; }
+            .container { width: 100%; padding: 10px; }
+            form.filters { grid-template-columns: 1fr; gap: 15px; }
+            .form-buttons { flex-direction: column; }
+            .form-buttons button, .form-buttons a { width: 100%; }
+            table { font-size: 11px; }
+            th, td { padding: 6px; }
+            .database-btn { width: 40px; height: 40px; font-size: 16px; }
         }
 
-        h1 {
-            color: #ffffff;
+        @media print {
+            header, footer, .database-btn { display: none; }
+            table { page-break-inside: avoid; }
         }
     </style>
 </head>
 <body>
-    <Header>
-        <h1>SEARCH PARTS</h1>
-    </Header>
+    <!-- Header -->
+    <header>
+        <h1>SEARCH PARTS - TRACEABILITY SYSTEM</h1>
+    </header>
 
-    <a href="{% url 'admin:track_traceabilitydata_changelist' %}" class="database-btn">💾</a>
-    <a href="{% url 'combined_page' %}" class="database-btn" style="left: 80px;">🏠</a>
-    
-    <div class="container">
-        
-        <form method="get" class="filters">
-            <div class="form-group">
-                {{ filter.form.part_number.label_tag }}
-                {{ filter.form.part_number }}
-            </div>
-            <div class="form-group">
-                {{ filter.form.start_date.label_tag }}
-                <input type="date" name="start_date" value="{{ request.GET.start_date }}">
-            </div>
-            <div class="form-group">
-                {{ filter.form.end_date.label_tag }}
-                <input type="date" name="end_date" value="{{ request.GET.end_date }}">
-            </div>
-            <div class="form-group">
-                {{ filter.form.shift.label_tag }}
-                {{ filter.form.shift }}
-            </div>
-            <div class="form-buttons">
-                <button type="submit">Search</button>
-                <a href="{% url 'search_parts' %}" class="clear-button">Clear</a>
-                <a href="{% url 'export_excel' %}?{{ request.GET.urlencode }}" class="clear-button" style="background-color: green;">Export Excel</a>
-            </div>
-            
-        </form>
-        
-        <h2>Results</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>SR No.</th>
-                    <th>PART NUMBER</th>
-                    <th>DATE</th>
-                    <th>TIME</th>
-                    <th>SHIFT</th>
-                    <th>DRILLING ST1</th>
-                    <th>VACCUM ST2</th>
-                    <th>HOT PLATE ST3</th>
-                    <th>LEAKAGE ST4</th>
-                    <th>POKA YOKE ST5</th>
-                    <th>WEIGHT ST6</th> 
-                </tr>
-            </thead>
-            <tbody>
-                {% for data in filter.qs %}
-                    <tr>
-                        <td>{{ data.sr_no|default_if_none:"" }}</td>
-                        <td>{{ data.part_number|default_if_none:"" }}</td>
-                        <td>{{ data.date|default_if_none:"" }}</td>
-                        <td>{{ data.time|default_if_none:"" }}</td>
-                        <td>{{ data.shift|default_if_none:"" }}</td>
-                        <td>{{ data.st1_result|default_if_none:"" }}</td>
-                        <td>{{ data.st2_result|default_if_none:"" }}</td>
-                        <td>{{ data.st3_result|default_if_none:"" }}</td>
-                        <td>{{ data.st4_result|default_if_none:"" }}</td>
-                        <td>{{ data.st5_result|default_if_none:"" }}</td>
-                        <td>{{ data.st6_result|default_if_none:"" }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="13">No results found.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>            
-        </table>
+    <!-- Navigation Buttons -->
+    <a href="{% url 'admin:track_traceabilitydata_changelist' %}"
+       class="database-btn" title="View Database">💾</a>
+    <a href="{% url 'combined_page' %}"
+       class="database-btn" title="Back to Dashboard">🏠</a>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="container">
+
+            <!-- Filter Form -->
+            <form method="get" class="filters" aria-label="Search and filter traceability data">
+                <div class="form-group">
+                    <label for="id_part_number">Part Number:</label>
+                    {{ filter.form.part_number }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_start_date">Start Date:</label>
+                    <input type="date"
+                           id="id_start_date"
+                           name="start_date"
+                           value="{{ request.GET.start_date }}"
+                           aria-label="Filter by start date">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_end_date">End Date:</label>
+                    <input type="date"
+                           id="id_end_date"
+                           name="end_date"
+                           value="{{ request.GET.end_date }}"
+                           aria-label="Filter by end date">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_shift">Shift:</label>
+                    {{ filter.form.shift }}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-group" style="justify-content: flex-start;">
+                    <div class="form-buttons">
+                        <button type="submit" aria-label="Search">Search</button>
+                        <a href="{% url 'search_parts' %}" class="clear-button">Clear</a>
+                        <a href="{% url 'export_excel' %}?{{ request.GET.urlencode }}"
+                           class="export-button"
+                           title="Export results as Excel file">Export Excel</a>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Results -->
+            <h2>Search Results ({% if filter.qs %}{{ filter.qs|length }}{% else %}0{% endif %} records)</h2>
+
+            {% if filter.qs %}
+                <div class="table-wrapper">  <!-- ✅ Scrollable -->
+                    <table role="table" aria-label="Traceability data search results">
+                        <thead>
+                            <tr>
+                                <!-- ✅ Main columns -->
+                                <th rowspan="2">SR No.</th>
+                                <th rowspan="2">PART NUMBER</th>
+                                <th rowspan="2">DATE</th>
+                                <th rowspan="2">TIME</th>
+                                <th rowspan="2">SHIFT</th>
+                                <!-- ✅ Station group headers -->
+                                <th colspan="2" class="station-header">DRILLING ST1</th>
+                                <th colspan="2" class="station-header">VACUUM ST2</th>
+                                <th colspan="2" class="station-header">HOT PLATE ST3</th>
+                                <th colspan="2" class="station-header">LEAKAGE ST4</th>
+                                <th colspan="2" class="station-header">POKA YOKE ST5</th>
+                                <th colspan="2" class="station-header">WEIGHT ST6</th>
+                            </tr>
+                            <tr>
+                                <!-- ✅ Sub headers -->
+                                <th>RESULT</th><th>DATETIME</th>
+                                <th>RESULT</th><th>DATETIME</th>
+                                <th>RESULT</th><th>DATETIME</th>
+                                <th>RESULT</th><th>DATETIME</th>
+                                <th>RESULT</th><th>DATETIME</th>
+                                <th>RESULT</th><th>DATETIME</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in filter.qs %}
+                                <tr>
+                                    <td>{{ data.sr_no|default_if_none:"" }}</td>
+                                    <td>{{ data.part_number|default_if_none:"" }}</td>
+                                    <td>{{ data.date|default_if_none:"" }}</td>
+                                    <td>{{ data.time|default_if_none:"" }}</td>
+                                    <td>{{ data.shift|default_if_none:"Unknown" }}</td>
+
+                                    <!-- ✅ ST1 -->
+                                    <td class="{% if data.st1_result == 'OK' %}ok-cell{% elif data.st1_result == 'NOT OK' %}not-ok-cell{% else %}pending-cell{% endif %}">
+                                        {{ data.st1_result|default_if_none:"PENDING" }}
+                                    </td>
+                                    <td class="datetime-cell">
+                                        {{ data.st1_datetime|date:"d/m/Y H:i:s"|default_if_none:"--" }}
+                                    </td>
+
+                                    <!-- ✅ ST2 -->
+                                    <td class="{% if data.st2_result == 'OK' %}ok-cell{% elif data.st2_result == 'NOT OK' %}not-ok-cell{% else %}pending-cell{% endif %}">
+                                        {{ data.st2_result|default_if_none:"PENDING" }}
+                                    </td>
+                                    <td class="datetime-cell">
+                                        {{ data.st2_datetime|date:"d/m/Y H:i:s"|default_if_none:"--" }}
+                                    </td>
+
+                                    <!-- ✅ ST3 -->
+                                    <td class="{% if data.st3_result == 'OK' %}ok-cell{% elif data.st3_result == 'NOT OK' %}not-ok-cell{% else %}pending-cell{% endif %}">
+                                        {{ data.st3_result|default_if_none:"PENDING" }}
+                                    </td>
+                                    <td class="datetime-cell">
+                                        {{ data.st3_datetime|date:"d/m/Y H:i:s"|default_if_none:"--" }}
+                                    </td>
+
+                                    <!-- ✅ ST4 -->
+                                    <td class="{% if data.st4_result == 'OK' %}ok-cell{% elif data.st4_result == 'NOT OK' %}not-ok-cell{% else %}pending-cell{% endif %}">
+                                        {{ data.st4_result|default_if_none:"PENDING" }}
+                                    </td>
+                                    <td class="datetime-cell">
+                                        {{ data.st4_datetime|date:"d/m/Y H:i:s"|default_if_none:"--" }}
+                                    </td>
+
+                                    <!-- ✅ ST5 -->
+                                    <td class="{% if data.st5_result == 'OK' %}ok-cell{% elif data.st5_result == 'NOT OK' %}not-ok-cell{% else %}pending-cell{% endif %}">
+                                        {{ data.st5_result|default_if_none:"PENDING" }}
+                                    </td>
+                                    <td class="datetime-cell">
+                                        {{ data.st5_datetime|date:"d/m/Y H:i:s"|default_if_none:"--" }}
+                                    </td>
+
+                                    <!-- ✅ ST6 -->
+                                    <td class="{% if data.st6_result == 'OK' %}ok-cell{% elif data.st6_result == 'NOT OK' %}not-ok-cell{% else %}pending-cell{% endif %}">
+                                        {{ data.st6_result|default_if_none:"PENDING" }}
+                                    </td>
+                                    <td class="datetime-cell">
+                                        {{ data.st6_datetime|date:"d/m/Y H:i:s"|default_if_none:"--" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="no-results">
+                    <p>No results found matching your search criteria.</p>
+                    <p>Try adjusting your filters and searching again.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 BAPL TRACEABILITY. All rights reserved.</p>
+    </footer>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-          // Focus the part number input field
-          const partInput = document.querySelector('input[name="part_number"]');
-          if (partInput) {
-            partInput.focus();
-      
-            // Optionally, auto-submit the form when "Enter" is pressed
-            partInput.addEventListener('keypress', function(e) {
-              if (e.key === 'Enter') {
-                e.preventDefault(); // prevent default form submission if needed
-                this.form.submit();
-              }
-            });
-          }
+            const partInput = document.querySelector('input[name="part_number"]');
+            if (partInput) {
+                partInput.focus();
+                partInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.form.submit();
+                    }
+                });
+            }
+
+            const startDate = document.getElementById('id_start_date');
+            const endDate = document.getElementById('id_end_date');
+            if (startDate && endDate) {
+                endDate.addEventListener('change', function() {
+                    if (startDate.value && this.value && startDate.value > this.value) {
+                        alert('End date must be after start date');
+                        this.value = '';
+                    }
+                });
+            }
         });
-      </script>
+
+        document.querySelector('form.filters')?.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn.disabled) { e.preventDefault(); return; }
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Searching...';
+        });
+    </script>
 </body>
 </html>

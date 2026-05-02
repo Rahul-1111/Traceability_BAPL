@@ -31,7 +31,6 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # Add this line
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -42,7 +41,7 @@ ROOT_URLCONF = "Traceability.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ['D:/Shubham/BAPL_Rototech/Traceability_BAPL/track/templates'],
+        "DIRS": ['C:/Users/admin/Documents/BAPL_Rototech/Traceability_BAPL/track/templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -55,7 +54,6 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = "Traceability.asgi.application"
 WSGI_APPLICATION = "Traceability.wsgi.application"
 
 # Database Configuration
@@ -65,6 +63,17 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'BAPL',        # your DB name
+#         'USER': 'postgres',       # default user
+#         'PASSWORD': '12345687',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
